@@ -2,7 +2,7 @@
 
 from setuptools import setup
 
-description = 'A hack package to add Course Access Groups support for edx-search.'
+description = 'A hack package to add Course Access Groups / `has_access` support for edx-search.'
 
 setup(
     name='tahoe-search-cag-support',

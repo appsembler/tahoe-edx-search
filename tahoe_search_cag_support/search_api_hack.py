@@ -2,6 +2,12 @@
 Module for Tahoe hacks for the edx-search repository.
 """
 
+from logging import getLogger
+from search import api as edx_search_api
+from search import views as edx_search_views
+
+log = getLogger(__name__)
+
 
 def has_access_for_results(results):
     """
@@ -42,3 +48,21 @@ def has_access_for_results(results):
             if max(0, count - access_denied_count)
         }
     return results
+
+
+def override_course_discovery_search():
+    func_path = 'course_discovery_search'
+    upstream_course_discovery_search = getattr(edx_search_api, func_path)
+    if upstream_course_discovery_search.__name__ != func_path:
+        raise Exception('Should not override twice')
+
+    def tahoe_hacked_course_discovery_search(*args, **kwargs):
+        """
+        A modified function of upstream edx-search `search.api.course_discovery_search` to support CAG.
+        """
+        results = upstream_course_discovery_search
+        return has_access_for_results(results)
+
+    for module_ in [edx_search_api, edx_search_views]:
+        setattr(module_, func_path, tahoe_hacked_course_discovery_search)
+        log.warning('Hack: Overriding course_discovery_search for `has_access`/`cag` support in %s', module_)
