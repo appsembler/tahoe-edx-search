@@ -1,2 +1,3 @@
-# tahoe-search-cag-support
-A hack package to add Course Access Groups support for edx-search
+# Tahoe edX Search Customizations
+
+A hack package to add Course Access Groups support for edx-search.
