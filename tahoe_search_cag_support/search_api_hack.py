@@ -64,5 +64,9 @@ def override_course_discovery_search():
         return has_access_for_results(results)
 
     for module_ in [edx_search_api, edx_search_views]:
-        setattr(module_, func_path, tahoe_hacked_course_discovery_search)
-        log.warning('Hack: Overriding course_discovery_search for `has_access`/`cag` support in %s', module_)
+        current_function = getattr(module_, func_path)
+        if current_function.__name__ == 'course_discovery_search':
+            setattr(module_, func_path, tahoe_hacked_course_discovery_search)
+            log.warning('Hack: Overriding course_discovery_search for `has_access`/`cag` support in %s', module_)
+        else:
+            log.warning('Hack: Overriding course_discovery_search not done name found %s', current_function.__name__)
