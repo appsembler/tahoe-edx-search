@@ -9,7 +9,7 @@ from search import views as edx_search_views
 log = getLogger(__name__)
 
 
-def has_access_for_results(results):
+def filter_results_with_has_access(results):
     """
     Filter CourseDiscovery search results via the edX Platform LMS `has_access` function.
 
@@ -54,19 +54,17 @@ def override_course_discovery_search():
     func_path = 'course_discovery_search'
     upstream_course_discovery_search = getattr(edx_search_api, func_path)
     if upstream_course_discovery_search.__name__ != func_path:
-        raise Exception('Should not override twice')
+        raise Exception('course_discovery_search: Should not be overridden twice')
 
     def tahoe_hacked_course_discovery_search(*args, **kwargs):
         """
         A modified function of upstream edx-search `search.api.course_discovery_search` to support CAG.
         """
         results = upstream_course_discovery_search
-        return has_access_for_results(results)
+        return filter_results_with_has_access(results)
 
     for module_ in [edx_search_api, edx_search_views]:
         current_function = getattr(module_, func_path)
         if current_function.__name__ == 'course_discovery_search':
             setattr(module_, func_path, tahoe_hacked_course_discovery_search)
-            log.warning('Hack: Overriding course_discovery_search for `has_access`/`cag` support in %s', module_)
-        else:
-            log.warning('Hack: Overriding course_discovery_search not done name found %s', current_function.__name__)
+            log.warning('Hack: Override course_discovery_search for `has_access`/`cag` support in %s', module_)

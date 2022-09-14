@@ -1,5 +1,5 @@
 """
-Tests for the tahoe_hacks module.
+Tests for the search_api_hack module.
 
 This tech-debt and we should implement a proper edx-search results processor:
  - Tech debt task: https://appsembler.atlassian.net/browse/RED-637
@@ -9,7 +9,7 @@ This tech-debt and we should implement a proper edx-search results processor:
 from django.test import TestCase
 from mock import patch, Mock
 
-from search.tahoe_hacks import has_access_for_results
+from tahoe_edx_search.search_api_hack import has_access_for_results
 
 
 class TestHackFilterDiscoveryResults(TestCase):
